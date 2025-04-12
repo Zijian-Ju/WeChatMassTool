@@ -11,8 +11,8 @@ from typing import Iterable, List
 
 import uiautomation as auto
 
-from config import (WeChat, Interval)
-from utils import (copy_files_to_clipboard, wake_up_window, is_window_visible)
+from config import WeChat, Interval
+from utils import copy_files_to_clipboard, wake_up_window, is_window_visible
 
 
 class WxOperation:
@@ -53,9 +53,10 @@ class WxOperation:
         if not self.visible_flag:
             wake_up_window(class_name=WeChat.WINDOW_CLASSNAME, name=WeChat.WINDOW_NAME)
             self.wx_window = auto.WindowControl(Name=WeChat.WINDOW_NAME, ClassName=WeChat.WINDOW_CLASSNAME)
-            if not self.wx_window.Exists(Interval.MAX_SEARCH_SECOND,
-                                         searchIntervalSeconds=Interval.MAX_SEARCH_INTERVAL):
-                raise Exception('微信似乎并没有登录!')
+            if not self.wx_window.Exists(
+                Interval.MAX_SEARCH_SECOND, searchIntervalSeconds=Interval.MAX_SEARCH_INTERVAL
+            ):
+                raise Exception("微信似乎并没有登录!")
             self.input_edit = self.wx_window.EditControl()
             self.visible_flag = bool(self.visible_flag)
         # 微信窗口置顶
@@ -79,24 +80,24 @@ class WxOperation:
             None
         """
         assert name, "无法跳转到名字为空的聊天窗口"
-        self.wx_window.SendKeys(text='{Ctrl}F', waitTime=Interval.BASE_INTERVAL)
-        self.wx_window.SendKeys(text='{Ctrl}A', waitTime=Interval.BASE_INTERVAL)
-        self.wx_window.SendKey(key=auto.SpecialKeyNames['DELETE'])
+        self.wx_window.SendKeys(text="{Ctrl}F", waitTime=Interval.BASE_INTERVAL)
+        self.wx_window.SendKeys(text="{Ctrl}A", waitTime=Interval.BASE_INTERVAL)
+        self.wx_window.SendKey(key=auto.SpecialKeyNames["DELETE"])
         auto.SetClipboardText(text=name)
         time.sleep(Interval.BASE_INTERVAL)
-        self.wx_window.SendKeys(text='{Ctrl}V', waitTime=Interval.BASE_INTERVAL)
+        self.wx_window.SendKeys(text="{Ctrl}V", waitTime=Interval.BASE_INTERVAL)
         # 若有匹配结果，第一个元素的类型为PaneControl
         search_nodes = self.wx_window.ListControl(foundIndex=2).GetChildren()
         if not isinstance(search_nodes.pop(0), auto.PaneControl):
-            self.wx_window.SendKeys(text='{Esc}', waitTime=Interval.BASE_INTERVAL)
+            self.wx_window.SendKeys(text="{Esc}", waitTime=Interval.BASE_INTERVAL)
             raise ValueError("昵称不匹配")
         # 只考虑全匹配, 不考虑好友昵称重名, 不考虑好友昵称与群聊重名
         if search_nodes[0].Name == name:
-            self.wx_window.SendKey(key=auto.SpecialKeyNames['ENTER'], waitTime=Interval.BASE_INTERVAL)
+            self.wx_window.SendKey(key=auto.SpecialKeyNames["ENTER"], waitTime=Interval.BASE_INTERVAL)
             time.sleep(Interval.BASE_INTERVAL)
             return True
         # 无匹配用户, 取消搜索框
-        self.wx_window.SendKeys(text='{Esc}', waitTime=Interval.BASE_INTERVAL)
+        self.wx_window.SendKeys(text="{Esc}", waitTime=Interval.BASE_INTERVAL)
         return False
 
     def at_at_everyone(self, group_chat_name: str):
@@ -112,15 +113,15 @@ class WxOperation:
         # 只要匹配不上，说明这是个群聊窗口
         if not result.Exists(Interval.MAX_SEARCH_SECOND, searchIntervalSeconds=Interval.MAX_SEARCH_INTERVAL):
             # 寻找是否有 @所有人 的选项
-            self.input_edit.SendKeys(text='{Shift}2', waitTime=Interval.BASE_INTERVAL)
-            everyone = self.wx_window.ListItemControl(Name='所有人')
+            self.input_edit.SendKeys(text="{Shift}2", waitTime=Interval.BASE_INTERVAL)
+            everyone = self.wx_window.ListItemControl(Name="所有人")
             if not everyone.Exists(Interval.MAX_SEARCH_SECOND, searchIntervalSeconds=Interval.MAX_SEARCH_INTERVAL):
-                self.input_edit.SendKeys(text='{Ctrl}A', waitTime=Interval.BASE_INTERVAL)
-                self.input_edit.SendKeys(text='{Delete}', waitTime=Interval.BASE_INTERVAL)
+                self.input_edit.SendKeys(text="{Ctrl}A", waitTime=Interval.BASE_INTERVAL)
+                self.input_edit.SendKeys(text="{Delete}", waitTime=Interval.BASE_INTERVAL)
                 return
-            self.input_edit.SendKeys(text='{Up}', waitTime=Interval.BASE_INTERVAL)
-            self.input_edit.SendKeys(text='{Enter}', waitTime=Interval.BASE_INTERVAL)
-            self.input_edit.SendKeys(text='{Enter}', waitTime=Interval.BASE_INTERVAL)
+            self.input_edit.SendKeys(text="{Up}", waitTime=Interval.BASE_INTERVAL)
+            self.input_edit.SendKeys(text="{Enter}", waitTime=Interval.BASE_INTERVAL)
+            self.input_edit.SendKeys(text="{Enter}", waitTime=Interval.BASE_INTERVAL)
 
     def __send_text(self, *msgs, wait_time, send_shortcut) -> None:
         """
@@ -142,20 +143,20 @@ class WxOperation:
 
         for msg in msgs:
             assert msg, "发送的文本内容为空"
-            self.input_edit.SendKeys(text='{Ctrl}a', waitTime=wait_time)
-            self.input_edit.SendKey(key=auto.SpecialKeyNames['DELETE'], waitTime=wait_time)
-            self.input_edit.SendKeys(text='{Ctrl}a', waitTime=wait_time)
-            self.input_edit.SendKey(key=auto.SpecialKeyNames['DELETE'], waitTime=wait_time)
+            self.input_edit.SendKeys(text="{Ctrl}a", waitTime=wait_time)
+            self.input_edit.SendKey(key=auto.SpecialKeyNames["DELETE"], waitTime=wait_time)
+            self.input_edit.SendKeys(text="{Ctrl}a", waitTime=wait_time)
+            self.input_edit.SendKey(key=auto.SpecialKeyNames["DELETE"], waitTime=wait_time)
 
             if should_use_clipboard(msg):
                 auto.SetClipboardText(text=msg)
                 time.sleep(wait_time * 2.5)
-                self.input_edit.SendKeys(text='{Ctrl}v', waitTime=wait_time * 2)
+                self.input_edit.SendKeys(text="{Ctrl}v", waitTime=wait_time * 2)
             else:
                 self.input_edit.SendKeys(text=msg, waitTime=wait_time * 2)
 
             # 设置到剪切板再黏贴到输入框
-            self.wx_window.SendKeys(text=f'{send_shortcut}', waitTime=wait_time * 2)
+            self.wx_window.SendKeys(text=f"{send_shortcut}", waitTime=wait_time * 2)
 
     def __send_file(self, *file_paths, wait_time, send_shortcut) -> None:
         """
@@ -172,9 +173,9 @@ class WxOperation:
         # 复制文件到剪切板
         if copy_files_to_clipboard(file_paths=file_paths):
             # 粘贴到输入框
-            self.input_edit.SendKeys(text='{Ctrl}V', waitTime=wait_time)
+            self.input_edit.SendKeys(text="{Ctrl}V", waitTime=wait_time)
             # 按下回车键
-            self.wx_window.SendKeys(text=f'{send_shortcut}', waitTime=wait_time / 2)
+            self.wx_window.SendKeys(text=f"{send_shortcut}", waitTime=wait_time / 2)
 
             time.sleep(wait_time)  # 等待发送动作完成
 
@@ -197,7 +198,7 @@ class WxOperation:
         self.wx_window.ListControl(Name="联系人").ButtonControl(Name="通讯录管理").Click(simulateMove=False)
         # 切换到通讯录管理，相当于切换到弹出来的页面
         contacts_window = auto.GetForegroundControl()
-        contacts_window.ButtonControl(Name='最大化').Click(simulateMove=False)
+        contacts_window.ButtonControl(Name="最大化").Click(simulateMove=False)
 
         if tag:
             try:
@@ -205,8 +206,8 @@ class WxOperation:
                 contacts_window.PaneControl(Name=tag).Click(simulateMove=False)
                 time.sleep(Interval.BASE_INTERVAL * 2)
             except LookupError:
-                contacts_window.SendKey(auto.SpecialKeyNames['ESC'])
-                raise LookupError(f'找不到 {tag} 标签')
+                contacts_window.SendKey(auto.SpecialKeyNames["ESC"])
+                raise LookupError(f"找不到 {tag} 标签")
 
         name_list = list()
         last_names = None
@@ -226,16 +227,20 @@ class WxOperation:
             for node in nodes:
                 # TODO 如果有需要, 可以处理成导出为两列的csv格式
                 nick_name = node.TextControl().Name  # 用户名
-                remark_name = node.ButtonControl(foundIndex=2).Name  # 用户备注名，索引1会错位，索引2是备注名，索引3是标签名
+                remark_name = node.ButtonControl(
+                    foundIndex=2
+                ).Name  # 用户备注名，索引1会错位，索引2是备注名，索引3是标签名
                 name_list.append(remark_name if remark_name else nick_name)
             # 向下滚动页面
             contacts_window.WheelDown(wheelTimes=8, waitTime=Interval.BASE_INTERVAL / 2)
         # 结束时候关闭 "通讯录管理" 窗口
-        contacts_window.SendKey(auto.SpecialKeyNames['ESC'])
+        contacts_window.SendKey(auto.SpecialKeyNames["ESC"])
         # 简单去重，但是存在误判（如果存在同名的好友), 保持获取时候的顺序
         return list(dict.fromkeys(name_list))
 
-    def get_chat_group_name_list(self, ):
+    def get_chat_group_name_list(
+        self,
+    ):
         """
         获取微信群聊名称列表.
 
@@ -252,7 +257,7 @@ class WxOperation:
         # 切换到通讯录管理，相当于切换到弹出来的页面
         contacts_window = auto.GetForegroundControl()
 
-        contacts_window.ButtonControl(Name='最大化').Click(simulateMove=False)
+        contacts_window.ButtonControl(Name="最大化").Click(simulateMove=False)
         contacts_window.ButtonControl(Name="最近群聊").Click(simulateMove=False)
 
         time.sleep(Interval.BASE_INTERVAL * 2)
@@ -274,26 +279,34 @@ class WxOperation:
             # 向下滑动
             contacts_window.PaneControl(foundIndex=5).WheelDown(wheelTimes=8, waitTime=Interval.BASE_INTERVAL / 2)
         # 结束时候关闭 "通讯录管理" 窗口
-        contacts_window.SendKey(auto.SpecialKeyNames['ESC'])
+        contacts_window.SendKey(auto.SpecialKeyNames["ESC"])
         # 简单去重，但是存在误判（如果存在同名的好友), 保持获取时候的顺序
         return list(dict.fromkeys(chat_group_name_list))
 
     def get_group_chat_list(self) -> list:
         """获取群聊通讯录中的用户名称"""
         name_list = list()
-        auto.ButtonControl(Name='聊天信息').Click()
+        auto.ButtonControl(Name="聊天信息").Click()
         time.sleep(0.5)
-        chat_members_win = self.wx_window.ListControl(Name='聊天成员')
+        chat_members_win = self.wx_window.ListControl(Name="聊天成员")
         if not chat_members_win.Exists():
             return list()
-        self.wx_window.ButtonControl(Name='查看更多').Click()
+        self.wx_window.ButtonControl(Name="查看更多").Click()
         for item in chat_members_win.GetChildren():
             name_list.append(item.ButtonControl().Name)
         return name_list
 
-    def send_msg(self, name, msgs=None, file_paths=None, add_remark_name=False, at_everyone=False,
-                 text_interval=Interval.SEND_TEXT_INTERVAL, file_interval=Interval.SEND_FILE_INTERVAL,
-                 send_shortcut='{Enter}') -> None:
+    def send_msg(
+        self,
+        name,
+        msgs=None,
+        file_paths=None,
+        add_remark_name=False,
+        at_everyone=False,
+        text_interval=Interval.SEND_TEXT_INTERVAL,
+        file_interval=Interval.SEND_FILE_INTERVAL,
+        send_shortcut="{Enter}",
+    ) -> None:
         """
         发送消息，可同时发送文本和文件（至少选一项
 
@@ -330,7 +343,7 @@ class WxOperation:
         # 如果当前面板已经是需发送好友, 则无需再次搜索跳转
         if not self.__match_nickname(name=name):
             if not self.__goto_chat_box(name=name):
-                raise NameError('昵称不匹配')
+                raise NameError("昵称不匹配")
 
         # 设置输入框为当前焦点
         self.input_edit = self.wx_window.EditControl(Name=name)
@@ -357,7 +370,7 @@ class WxOperation:
         self.wx_window.SetTopmost(isTopmost=False)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     wx = WxOperation()
     data = wx.get_chat_group_name_list()
     print(data)

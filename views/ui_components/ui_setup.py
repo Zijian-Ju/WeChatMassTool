@@ -5,7 +5,7 @@
 # Description:  一些ui公共方法
 
 from PySide6.QtGui import QColor
-from PySide6.QtWidgets import (QGraphicsDropShadowEffect, QWidget)
+from PySide6.QtWidgets import QGraphicsDropShadowEffect, QWidget
 
 
 def apply_shadow_effect(self, blur_radius=10, x_offset=0, y_offset=0, color=(0, 0, 0, 150)):

@@ -11,23 +11,34 @@ from ctypes import windll
 
 import PySide6
 import uiautomation
-from PySide6 import QtGui
-from PySide6.QtWidgets import (QApplication, QMessageBox, QWidget)
 from cprint import cprint
+from PySide6 import QtGui
+from PySide6.QtWidgets import QApplication, QMessageBox, QWidget
 
-from config import (Animate, WeChat)
+from config import Animate, WeChat
 from controllers import ControllerMain
 from utils import (
-    get_specific_process, is_process_running, get_resource_path, get_config, minimize_wechat, write_file, delete_file,
-    path_exists, get_temp_file_path, read_file, get_pid, delete_old_files_with_extension, join_path
+    delete_file,
+    delete_old_files_with_extension,
+    get_config,
+    get_pid,
+    get_resource_path,
+    get_specific_process,
+    get_temp_file_path,
+    is_process_running,
+    join_path,
+    minimize_wechat,
+    path_exists,
+    read_file,
+    write_file,
 )
-from version import (__version__, __project_name__, __author__)
+from version import __author__, __project_name__, __version__
 
 
 def set_app_user_model_id():
     """设置应用程序用户模型ID"""
     try:
-        myapp_id = 'myapp_id'
+        myapp_id = "myapp_id"
         windll.shell32.SetCurrentProcessExplicitAppUserModelID(myapp_id)
     except ImportError:
         pass
@@ -65,20 +76,20 @@ def print_startup_info():
 
         项目启动中...
     """
-    cprint.info(bot_logo.rstrip('\n'))
-    cprint.info(startup_info.rstrip('\n'))
+    cprint.info(bot_logo.rstrip("\n"))
+    cprint.info(startup_info.rstrip("\n"))
 
 
 def check_wechat_running():
     """检查微信是否运行"""
     if not get_specific_process(proc_name=WeChat.WeChat_PROCESS_NAME):
-        QMessageBox.critical(QWidget(), '报错咯', "微信未启动!")
+        QMessageBox.critical(QWidget(), "报错咯", "微信未启动!")
         sys.exit()  # 退出程序
 
 
 def initialize_application():
     app = QApplication()
-    app.setWindowIcon(QtGui.QIcon(get_resource_path(r'views/resources/images/favicon.ico')))
+    app.setWindowIcon(QtGui.QIcon(get_resource_path(r"views/resources/images/favicon.ico")))
     check_wechat_running()
     # 获取默认配置, 看是否需要以动画形式启动
     controller = ControllerMain(get_config(WeChat.APP_NAME, section=Animate.SECTION, option=Animate.OPTION))
@@ -112,10 +123,10 @@ def ensure_single_instance():
 def main():
     """主入口"""
     # 删除三天前的进度缓存文件
-    delete_old_files_with_extension(get_temp_file_path(WeChat.APP_NAME), days=3, file_extension='.tmp')
+    delete_old_files_with_extension(get_temp_file_path(WeChat.APP_NAME), days=3, file_extension=".tmp")
     # 删除运行缓存文件
     delete_old_files_with_extension(
-        get_temp_file_path(join_path(WeChat.APP_NAME, '.cache')), days=0, file_extension='.pkl'
+        get_temp_file_path(join_path(WeChat.APP_NAME, ".cache")), days=0, file_extension=".pkl"
     )
 
     # 保证只有一个应用实例运行
@@ -127,5 +138,5 @@ def main():
     initialize_application()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     main()

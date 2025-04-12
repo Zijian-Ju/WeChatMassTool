@@ -5,6 +5,11 @@
 # Description:
 
 from config.config import (
-    ViewConfig, DarkConfig, LightConfig, AnimateConfig as Animate, WeChatConfig as WeChat,
-    IntervalConfig as Interval, TUTORIAL_LINK
+    ViewConfig,
+    DarkConfig,
+    LightConfig,
+    AnimateConfig as Animate,
+    WeChatConfig as WeChat,
+    IntervalConfig as Interval,
+    TUTORIAL_LINK,
 )

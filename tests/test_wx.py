@@ -8,9 +8,4 @@ from utils import WxOperation
 
 wx = WxOperation()
 
-wx.send_msg('小菜',
-            [1123],
-            add_remark_name=True
-            )
-
-
+wx.send_msg("小菜", [1123], add_remark_name=True)

@@ -4,21 +4,21 @@
 # Date:         2024/3/22 15:19
 # Description:
 
-TUTORIAL_LINK = 'https://www.bilibili.com/video/BV1rz421B7Uw/'
+TUTORIAL_LINK = "https://www.bilibili.com/video/BV1rz421B7Uw/"
 
 
 class AnimateConfig:
-    SECTION = 'DEFAULT'
-    OPTION = 'animate_on_startup'
+    SECTION = "DEFAULT"
+    OPTION = "animate_on_startup"
 
 
 class WeChatConfig:
-    WeChat_PROCESS_NAME = 'WeChat.exe'
-    APP_NAME = 'WeChatMassTool'
-    APP_PROCESS_NAME = 'WeChatMassTool.exe'
-    APP_LOCK_NAME = 'WeChatMassTool.lock'
-    WINDOW_NAME = '微信'
-    WINDOW_CLASSNAME = 'WeChatMainWndForPC'
+    WeChat_PROCESS_NAME = "WeChat.exe"
+    APP_NAME = "WeChatMassTool"
+    APP_PROCESS_NAME = "WeChatMassTool.exe"
+    APP_LOCK_NAME = "WeChatMassTool.lock"
+    WINDOW_NAME = "微信"
+    WINDOW_CLASSNAME = "WeChatMainWndForPC"
 
 
 class ViewConfig:
@@ -30,7 +30,7 @@ class ViewConfig:
 
 
 class DarkConfig:
-    QSS_FILE = 'views/resources/themes/py_dracula_dark.qss'
+    QSS_FILE = "views/resources/themes/py_dracula_dark.qss"
 
     # BTNS LEFT AND RIGHT BOX COLORS
     BTN_LEFT_BOX_COLOR = "background-color: rgb(44, 49, 58);"
@@ -44,27 +44,26 @@ class DarkConfig:
 
     # MANUAL STYLES
     MANUAL_STYLES = {
-        'wechat': '''QTextEdit{background-color: rgb(27, 29, 35); font: 12pt "Microsoft YaHei UI";} 
+        "wechat": """QTextEdit{background-color: rgb(27, 29, 35); font: 12pt "Microsoft YaHei UI";} 
                     QFrame #frame_sub_1, 
                     QFrame#frame_sub_2, 
                     QFrame#frame_sub_3, 
                     QFrame#frame_sub_4 {
                         border: 2px solid #5D535E;border-radius: 6px;
-                    }''',
-        'file_list_widget': '''QListWidget {
+                    }""",
+        "file_list_widget": """QListWidget {
                                     background-color: rgb(27, 29, 35);
                                     border-radius: 5px;
                                     padding: 3px;
                                     border: 1px solid rgb(45, 45, 58);
                                     font: 12pt "Microsoft YaHei UI";
                                     color: #f8f8f2;
-                                }'''
-
+                                }""",
     }
 
 
 class LightConfig:
-    QSS_FILE = 'views/resources/themes/py_dracula_light.qss'
+    QSS_FILE = "views/resources/themes/py_dracula_light.qss"
 
     # BTNS LEFT AND RIGHT BOX COLORS
     BTN_LEFT_BOX_COLOR = "background-color: #495474;"
@@ -78,7 +77,7 @@ class LightConfig:
 
     # MANUAL STYLES
     MANUAL_STYLES = {
-        'wechat': '''QTextEdit{
+        "wechat": """QTextEdit{
                         background-color: #6272a4; 
                         font: 12pt "Microsoft YaHei UI";
                     } 
@@ -88,15 +87,15 @@ class LightConfig:
                     QFrame#frame_sub_4 {
                         border: 2px solid #627282;
                         border-radius: 6px;
-                    }''',
-        'file_list_widget': '''QListWidget {
+                    }""",
+        "file_list_widget": """QListWidget {
                                     background-color: #6272a4;
                                     border-radius: 5px;
                                     padding: 3px;
                                     border: 1px solid rgb(45, 45, 58);
                                     font: 12pt "Microsoft YaHei UI";
                                     color: #f8f8f2;
-                                }'''
+                                }""",
     }
 
 

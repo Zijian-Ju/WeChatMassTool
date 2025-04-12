@@ -5,21 +5,22 @@
 # Description:
 
 import sys
-from typing import (Tuple, Union)
+from typing import Tuple, Union
 
-from PySide6.QtCore import (Qt, QTimer, QEvent, QPoint, QPropertyAnimation, QParallelAnimationGroup, Signal)
-from PySide6.QtGui import (QIcon, QAction)
-from PySide6.QtWidgets import (QMainWindow, QApplication, QSizeGrip, QPushButton, QMessageBox, QWidget)
+from PySide6.QtCore import QEvent, QParallelAnimationGroup, QPoint, QPropertyAnimation, Qt, QTimer, Signal
+from PySide6.QtGui import QAction, QIcon
+from PySide6.QtWidgets import QApplication, QMainWindow, QMessageBox, QPushButton, QSizeGrip, QStatusBar, QWidget
 
-from config import (ViewConfig, DarkConfig, LightConfig)
+from config import DarkConfig, LightConfig, ViewConfig
+from utils import get_resource_path
 from views.ui_components import (
-    create_width_animation, create_animation_group, apply_shadow_effect, create_opacity_animation
+    apply_shadow_effect,
+    create_animation_group,
+    create_opacity_animation,
+    create_width_animation,
 )
 from views.ui_designs import Ui_MainWindow
-from views.widgets import CustomGrip
-
-from utils import get_resource_path
-from views.widgets import InfoBarWindow
+from views.widgets import CustomGrip, InfoBarWindow
 
 
 class MainWindow(QMainWindow, Ui_MainWindow):
@@ -44,11 +45,14 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.move_position: QPoint = QPoint(0, 0)
         #
         self.dark_theme: bool = bool(1)
-        self.current_selected_btn: str = 'btn_page_home'
+        self.current_selected_btn: str = "btn_page_home"
         self.config = DarkConfig
         # 信息栏窗口设置
         self.infobars = list()
         self.installEventFilter(self)  # 安装事件过滤器以跟踪窗口移动
+        # 添加状态栏
+        self.statusBar = QStatusBar(self)
+        self.setStatusBar(self.statusBar)
         #
         self.initialize_view()
         self.setup_connections()
@@ -69,7 +73,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.config = LightConfig if self.dark_theme else DarkConfig
         self.dark_theme = not self.dark_theme
         # 设置全局的新样式，新主题
-        with open(get_resource_path(self.config.QSS_FILE), mode='r', encoding='utf-8') as f:
+        with open(get_resource_path(self.config.QSS_FILE), mode="r", encoding="utf-8") as f:
             self.styleSheet.setStyleSheet(f.read())
         # 设置部件的样式
         for widget_name, style in self.config.MANUAL_STYLES.items():
@@ -155,7 +159,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.showMaximized()
             self.appMargins.setContentsMargins(0, 0, 0, 0)
             self.maximizeRestoreAppBtn.setToolTip("Restore")
-            self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/icons/icon_restore.png"))
+            self.maximizeRestoreAppBtn.setIcon(QIcon(":/icons/icons/icon_restore.png"))
             self.frame_size_grip.hide()
             self.left_grip.hide()
             self.right_grip.hide()
@@ -166,7 +170,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             self.resize(self.width() + 1, self.height() + 1)
             self.appMargins.setContentsMargins(10, 10, 10, 10)
             self.maximizeRestoreAppBtn.setToolTip("Maximize")
-            self.maximizeRestoreAppBtn.setIcon(QIcon(u":/icons/icons/icon_maximize.png"))
+            self.maximizeRestoreAppBtn.setIcon(QIcon(":/icons/icons/icon_maximize.png"))
             self.frame_size_grip.show()
             self.left_grip.show()
             self.right_grip.show()
@@ -177,9 +181,9 @@ class MainWindow(QMainWindow, Ui_MainWindow):
     def pause_and_continue_send(self):
         """暂停和继续发送"""
         if self.is_pause:
-            self.btn_pause_send.setIcon(QIcon(u":/icons/icons/cil-media-pause.png"))
+            self.btn_pause_send.setIcon(QIcon(":/icons/icons/cil-media-pause.png"))
         else:
-            self.btn_pause_send.setIcon(QIcon(u":/icons/icons/cil-media-play.png"))
+            self.btn_pause_send.setIcon(QIcon(":/icons/icons/cil-media-play.png"))
         self.is_pause = not self.is_pause
 
     def toggle_menu(self):
@@ -208,7 +212,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         if is_add:
             widget.setStyleSheet(widget.styleSheet() + self.config.MENU_SELECTED_STYLESHEET)
         else:
-            widget.setStyleSheet(widget.styleSheet().replace(self.config.MENU_SELECTED_STYLESHEET, ''))
+            widget.setStyleSheet(widget.styleSheet().replace(self.config.MENU_SELECTED_STYLESHEET, ""))
 
     def toggle_setting_btn_style(self, add_default_style=False) -> Union[Tuple[int, int], None]:
         """根据方向和是否添加的标志，切换给定控件的样式。
@@ -220,15 +224,11 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             关于动画组移动的元组 或 None
         """
         color_map = {
-            'left': self.config.BTN_LEFT_BOX_COLOR,
-            'right': self.config.BTN_RIGHT_BOX_COLOR,
+            "left": self.config.BTN_LEFT_BOX_COLOR,
+            "right": self.config.BTN_RIGHT_BOX_COLOR,
         }
 
-        direction_map = {
-            'toggleLeftBox': 'left',
-            'extraCloseColumnBtn': 'left',
-            'settingsTopBtn': 'right'
-        }
+        direction_map = {"toggleLeftBox": "left", "extraCloseColumnBtn": "left", "settingsTopBtn": "right"}
 
         # 获取触发当前动画的按钮 和 动画触发方向
         btn = self.sender()
@@ -245,16 +245,16 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         # 根据当前面板的宽度和方向，调整按钮样式
         if target_left_width and not target_right_width:
             # 展开左侧面板，应用左侧按钮样式，并移除右侧按钮样式
-            self.toggleLeftBox.setStyleSheet(left_style + color_map.get('left'))
-            self.settingsTopBtn.setStyleSheet(right_style.replace(color_map.get('right'), ''))
+            self.toggleLeftBox.setStyleSheet(left_style + color_map.get("left"))
+            self.settingsTopBtn.setStyleSheet(right_style.replace(color_map.get("right"), ""))
         elif not target_left_width and target_right_width:
             # 展开右侧面板，应用右侧按钮样式，并移除左侧按钮样式
-            self.toggleLeftBox.setStyleSheet(left_style.replace(color_map.get('left'), ''))
-            self.settingsTopBtn.setStyleSheet(right_style + color_map.get('right'))
+            self.toggleLeftBox.setStyleSheet(left_style.replace(color_map.get("left"), ""))
+            self.settingsTopBtn.setStyleSheet(right_style + color_map.get("right"))
         else:
             # 如果没有特定方向，移除触发按钮的样式
-            self.toggleLeftBox.setStyleSheet(left_style.replace(color_map.get('left'), ''))
-            self.settingsTopBtn.setStyleSheet(right_style.replace(color_map.get('right'), ''))
+            self.toggleLeftBox.setStyleSheet(left_style.replace(color_map.get("left"), ""))
+            self.settingsTopBtn.setStyleSheet(right_style.replace(color_map.get("right"), ""))
 
         return target_left_width, target_right_width
 
@@ -276,11 +276,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def switch_page(self):
         """切换页面"""
-        page_map = {
-            'btn_page_home': self.home,
-            'btn_page_pending': self.page_friend,
-            'btn_page_msg': self.wechat
-        }
+        page_map = {"btn_page_home": self.home, "btn_page_pending": self.page_friend, "btn_page_msg": self.wechat}
         selected_btn = self.sender()
         selected_btn_name: str = selected_btn.objectName()
         if page := page_map.get(selected_btn_name):
@@ -301,7 +297,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
         self.file_list_widget.setContextMenuPolicy(Qt.ActionsContextMenu)
         # # 具体菜单项
         right_menu = QAction(self.file_list_widget)
-        right_menu.setText('删除')
+        right_menu.setText("删除")
         # 绑定事件
         right_menu.triggered.connect(
             lambda: self.file_list_widget.takeItem(self.file_list_widget.row(self.file_list_widget.currentItem()))
@@ -344,7 +340,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
             duration (int, optional): 消息框显示的时间（毫秒），默认为 None，表示不自动关闭。
         """
         msg_box = QMessageBox(self)
-        msg_box.setWindowTitle('提示')
+        msg_box.setWindowTitle("提示")
         msg_box.setText(message)
         msg_box.setIcon(icon)
         if duration:
@@ -353,7 +349,7 @@ class MainWindow(QMainWindow, Ui_MainWindow):
 
     def set_text_in_widget(self, object_name, text):
         """根据控件的 objectName 设置文本"""
-        if (widget := self.findChild(QWidget, object_name)) and hasattr(widget, 'setText'):
+        if (widget := self.findChild(QWidget, object_name)) and hasattr(widget, "setText"):
             widget.setText(text)
         if not text:
             widget.clear()

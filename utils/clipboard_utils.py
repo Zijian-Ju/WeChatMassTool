@@ -7,7 +7,7 @@ import ctypes
 import os
 import time
 from ctypes import wintypes
-from typing import (Iterable, Callable, List)
+from typing import Iterable, Callable, List
 
 import win32clipboard
 
@@ -30,7 +30,7 @@ def retry_on_failure(max_retries: int = 5):
                     if func(*args, **kwargs):
                         return True
                 except Exception as e:
-                    time.sleep(.05)
+                    time.sleep(0.05)
                     print(f"Attempt {attempt + 1} failed: {e}")
             return False
 
@@ -117,10 +117,12 @@ def copy_files_to_clipboard(file_paths: Iterable[str]) -> bool:
     CF_HDROP = 15
 
     class DROPFILES(ctypes.Structure):
-        _fields_ = [("pFiles", wintypes.DWORD),
-                    ("pt", wintypes.POINT),
-                    ("fNC", wintypes.BOOL),
-                    ("fWide", wintypes.BOOL)]
+        _fields_ = [
+            ("pFiles", wintypes.DWORD),
+            ("pt", wintypes.POINT),
+            ("fNC", wintypes.BOOL),
+            ("fWide", wintypes.BOOL),
+        ]
 
     offset = ctypes.sizeof(DROPFILES)
     length = sum(len(p) + 1 for p in file_paths) + 1
@@ -134,7 +136,7 @@ def copy_files_to_clipboard(file_paths: Iterable[str]) -> bool:
         path_buf = array_t.from_buffer(buf, offset)
         path_buf.value = path
         offset += ctypes.sizeof(path_buf)
-    buf[offset:offset + ctypes.sizeof(wintypes.WCHAR)] = b'\0\0'
+    buf[offset : offset + ctypes.sizeof(wintypes.WCHAR)] = b"\0\0"
 
     # 验证文件是否成功复制到剪切板
     return validate_clipboard_files([os.path.normpath(file) for file in file_paths], CF_HDROP, buf=buf)

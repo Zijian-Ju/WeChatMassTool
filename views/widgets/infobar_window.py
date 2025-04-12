@@ -4,8 +4,8 @@
 # Date:         2024/5/23 上午01:09
 # Description:
 
-from PySide6.QtCore import (Qt, QTimer, QPropertyAnimation, QPoint)
-from PySide6.QtWidgets import (QFrame, QGraphicsOpacityEffect)
+from PySide6.QtCore import Qt, QTimer, QPropertyAnimation, QPoint
+from PySide6.QtWidgets import QFrame, QGraphicsOpacityEffect
 
 from views.ui_components import create_opacity_animation
 from views.ui_designs import Ui_InfoBar
@@ -15,7 +15,7 @@ class InfoBarWindow(QFrame, Ui_InfoBar):
     animation: QPropertyAnimation
     opacity_animation: QPropertyAnimation
 
-    def __init__(self, parent=None, message: str = str(), icon_type='success'):
+    def __init__(self, parent=None, message: str = str(), icon_type="success"):
         super(InfoBarWindow, self).__init__(parent)
         self.setupUi(self)
         # 独立窗口
@@ -37,14 +37,14 @@ class InfoBarWindow(QFrame, Ui_InfoBar):
         """动画从下到上淡入 InfoBar。"""
         start_pos = self.calculate_start_pos()
         end_pos = self.calculate_end_pos()
-        self.animation = create_opacity_animation(self, start_pos, end_pos, 800, property_name=b'pos')
+        self.animation = create_opacity_animation(self, start_pos, end_pos, 800, property_name=b"pos")
         self.animation.start()
 
     def close_animation(self):
         """动画淡出 InfoBar 然后从父窗口中移除。"""
         opacity_effect = QGraphicsOpacityEffect(self)
         self.setGraphicsEffect(opacity_effect)
-        self.opacity_animation = create_opacity_animation(opacity_effect, 1, 0, 500, b'opacity')
+        self.opacity_animation = create_opacity_animation(opacity_effect, 1, 0, 500, b"opacity")
         self.opacity_animation.finished.connect(self._remove_from_parent)
         self.opacity_animation.start()
 
@@ -60,8 +60,7 @@ class InfoBarWindow(QFrame, Ui_InfoBar):
         parent_geometry = self.parent().geometry()
         # 相对于父窗口右边缘的50像素间隔, 从父窗口底部开始
         return QPoint(
-            parent_geometry.right() - self.width() - 50,
-            (parent_geometry.top() + parent_geometry.height()) * 0.66
+            parent_geometry.right() - self.width() - 50, (parent_geometry.top() + parent_geometry.height()) * 0.66
         )
 
     def calculate_end_pos(self):
@@ -69,6 +68,5 @@ class InfoBarWindow(QFrame, Ui_InfoBar):
         parent_geometry = self.parent().geometry()
         index = self.parent().infobars.index(self)
         return QPoint(
-            parent_geometry.right() - self.width() - 50,
-            parent_geometry.top() + 40 + (self.height() + 10) * index
+            parent_geometry.right() - self.width() - 50, parent_geometry.top() + 40 + (self.height() + 10) * index
         )

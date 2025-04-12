@@ -40,15 +40,15 @@ def create_default_config(config_path):
     # 创建ConfigParser对象
     config = ConfigParser()
     # 创建一个新的config文件，并添加一个section
-    config['DEFAULT'] = {}
+    config["DEFAULT"] = {}
     # 添加一个字段 animation=False 到 DEFAULT section
-    config.set('DEFAULT', 'animate_on_startup', 'True')
+    config.set("DEFAULT", "animate_on_startup", "True")
     # 将配置项写入文件
-    with open(config_path, 'w') as configfile:
+    with open(config_path, "w") as configfile:
         config.write(configfile)
 
 
-def get_config(app_name, section='DEFAULT', option=None):
+def get_config(app_name, section="DEFAULT", option=None):
     """
     获取指定应用程序配置项的值。
 
@@ -105,5 +105,5 @@ def write_config(app_name, section, option, value):
     config.set(section, option, value)
 
     # 将更新后的配置写回文件
-    with open(config_path, 'w') as configfile:
+    with open(config_path, "w") as configfile:
         config.write(configfile)

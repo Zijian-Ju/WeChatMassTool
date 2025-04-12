@@ -6,9 +6,9 @@
 
 import sys
 
-from PySide6.QtCore import (Qt, QTimer, QPropertyAnimation, QRect, QEasingCurve, Signal)
-from PySide6.QtGui import (QColor, QPainter, QFont, QPen, QIcon)
-from PySide6.QtWidgets import (QMainWindow, QGraphicsDropShadowEffect, QWidget, QApplication)
+from PySide6.QtCore import Qt, QTimer, QPropertyAnimation, QRect, QEasingCurve, Signal
+from PySide6.QtGui import QColor, QPainter, QFont, QPen, QIcon
+from PySide6.QtWidgets import QMainWindow, QGraphicsDropShadowEffect, QWidget, QApplication
 
 from views.ui_components import apply_shadow_effect
 from views.ui_designs import Ui_Login
@@ -114,16 +114,16 @@ class CircularProgress(QWidget):
         self.progress_width = 10
         self.progress_rounded_cap = True
         self.max_value = 100
-        self.progress_color = 0xff79c6
+        self.progress_color = 0xFF79C6
         # Text
         self.enable_text = True
         self.font_family = "Segoe UI"
         self.font_size = 12
         self.suffix = "%"
-        self.text_color = 0xff79c6
+        self.text_color = 0xFF79C6
         # BG
         self.enable_bg = True
-        self.bg_color = 0x44475a
+        self.bg_color = 0x44475A
 
         # SET DEFAULT SIZE WITHOUT LAYOUT
         self.resize(self.width, self.height)

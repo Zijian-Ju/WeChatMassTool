@@ -28,11 +28,11 @@ def read_file(file: str):
     """
     try:
         # 检测文件的编码
-        with open(file, 'rb') as f:
+        with open(file, "rb") as f:
             result = chardet.detect(f.read(4096))
-            encoding = result['encoding'] or 'utf-8'
+            encoding = result["encoding"] or "utf-8"
         with open(file, encoding=encoding) as f:
-            return [line for line in f.read().split('\n') if line.strip()]
+            return [line for line in f.read().split("\n") if line.strip()]
     except (FileNotFoundError, FileExistsError):
         ...
     finally:
@@ -57,7 +57,7 @@ def write_file(file: str, data: list):
         if not os.path.exists(directory):
             os.makedirs(directory)
         # 创建文件
-        with open(file, encoding='utf-8', mode='w') as f:
+        with open(file, encoding="utf-8", mode="w") as f:
             f.write("\n".join(data))
     except (FileNotFoundError, FileExistsError):
         ...
@@ -153,7 +153,7 @@ def delete_file(file_path):
         return False
 
 
-def delete_old_files_with_extension(directory, days=3, file_extension='.tmp'):
+def delete_old_files_with_extension(directory, days=3, file_extension=".tmp"):
     """
     删除指定文件夹中超过指定天数前创建的所有文件
 

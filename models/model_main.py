@@ -6,9 +6,9 @@
 
 from typing import Dict
 from collections import defaultdict
-from PySide6.QtCore import (QObject, QRunnable, QThreadPool, Slot, Signal)
+from PySide6.QtCore import QObject, QRunnable, QThreadPool, Slot, Signal
 
-from utils import (WxOperation, write_file)
+from utils import WxOperation, write_file
 from models import RecordGeneratorModel
 
 
@@ -19,7 +19,7 @@ class TaskRunnable(QRunnable):
         self.task_id = task_id
         self.args = args
         self.kwargs = kwargs
-        self.toggleTaskStatusSignal = kwargs.get('toggleTaskStatusSignal')
+        self.toggleTaskStatusSignal = kwargs.get("toggleTaskStatusSignal")
 
     def run(self):
         try:
@@ -41,20 +41,20 @@ class TaskRunnable(QRunnable):
 class SendMessageTask(TaskRunnable):
     def execute_task(self):
         # 实现发送消息的逻辑
-        message_info = self.kwargs.get('message_info')
-        check_pause = self.kwargs.get('check_pause')
-        updatedProgressSignal = self.kwargs.get('updatedProgressSignal')
-        recordExecInfoSignal = self.kwargs.get('recordExecInfoSignal')
-        showInfoBarSignal = self.kwargs.get('showInfoBarSignal')
-        cacheProgressSignal = self.kwargs.get('cacheProgressSignal')
-        deleteCacheProgressSignal = self.kwargs.get('deleteCacheProgressSignal')
+        message_info = self.kwargs.get("message_info")
+        check_pause = self.kwargs.get("check_pause")
+        updatedProgressSignal = self.kwargs.get("updatedProgressSignal")
+        recordExecInfoSignal = self.kwargs.get("recordExecInfoSignal")
+        showInfoBarSignal = self.kwargs.get("showInfoBarSignal")
+        cacheProgressSignal = self.kwargs.get("cacheProgressSignal")
+        deleteCacheProgressSignal = self.kwargs.get("deleteCacheProgressSignal")
         #
-        name_list = message_info.pop('name_list')
-        cache_index = int(message_info.pop('cache_index', int(0)))
-        text_name_list_count = int(message_info.pop('text_name_list_count', int(0)))
+        name_list = message_info.pop("name_list")
+        cache_index = int(message_info.pop("cache_index", int(0)))
+        text_name_list_count = int(message_info.pop("text_name_list_count", int(0)))
         #
-        texts = '\n'.join(message_info.get('msgs', str()))
-        files = '\n'.join(message_info.get('file_paths', str()))
+        texts = "\n".join(message_info.get("msgs", str()))
+        files = "\n".join(message_info.get("file_paths", str()))
         #
         exec_info_map = dict()
         infobar_info = [0, 0]
@@ -66,12 +66,12 @@ class SendMessageTask(TaskRunnable):
             if not (cache_index and idx <= cache_index):
                 check_pause()  # 检查程序是否暂停
                 try:
-                    exec_info_map.update({'昵称': name, '文本': texts, '文件': files, '状态': '成功'})
+                    exec_info_map.update({"昵称": name, "文本": texts, "文件": files, "状态": "成功"})
                     self.func(name, **message_info)
-                    infobar_info = [True, f'{name[:8]} 发送成功']
+                    infobar_info = [True, f"{name[:8]} 发送成功"]
                 except (ValueError, TypeError, AssertionError, NameError) as e:
-                    exec_info_map.update({'状态': '失败', '备注': str(e)})
-                    infobar_info = [False, f'{name[:8]} {str(e)}']
+                    exec_info_map.update({"状态": "失败", "备注": str(e)})
+                    infobar_info = [False, f"{name[:8]} {str(e)}"]
                 finally:
                     recordExecInfoSignal.emit(exec_info_map)
                     showInfoBarSignal.emit(*infobar_info)
@@ -87,24 +87,24 @@ class SendMessageTask(TaskRunnable):
 
 class GetNameListTask(TaskRunnable):
     def execute_task(self):
-        tag = self.kwargs.get('tag')
-        file_path = self.kwargs.get('file_path')
-        exportNameListSignal = self.kwargs.get('exportNameListSignal')
+        tag = self.kwargs.get("tag")
+        file_path = self.kwargs.get("file_path")
+        exportNameListSignal = self.kwargs.get("exportNameListSignal")
         try:
             result = self.func(tag)
             write_file(file_path, data=result)
-            exportNameListSignal.emit(True, '文件导出成功')
+            exportNameListSignal.emit(True, "文件导出成功")
         except LookupError:
-            exportNameListSignal.emit(False, f'找不到 {tag} 标签')
+            exportNameListSignal.emit(False, f"找不到 {tag} 标签")
 
 
 class GetChatGroupNameListTask(TaskRunnable):
     def execute_task(self):
-        file_path = self.kwargs.get('file_path')
-        exportChatGroupNameListSignal = self.kwargs.get('exportChatGroupNameListSignal')
+        file_path = self.kwargs.get("file_path")
+        exportChatGroupNameListSignal = self.kwargs.get("exportChatGroupNameListSignal")
         result = self.func()
         write_file(file_path, data=result)
-        exportChatGroupNameListSignal.emit(True, '文件导出成功')
+        exportChatGroupNameListSignal.emit(True, "文件导出成功")
 
 
 class ModelMain(QObject):
@@ -130,7 +130,7 @@ class ModelMain(QObject):
 
     def export_name_list(self, tag, file_path):
         """导出标签好友名单"""
-        task_id = 'name_list'
+        task_id = "name_list"
         if self.task_status_map.get(task_id):
             return
         self.toggleTaskStatusSignal.emit(task_id)
@@ -138,16 +138,16 @@ class ModelMain(QObject):
         runnable = GetNameListTask(
             self.wx.get_friend_list,
             task_id=task_id,
-            tag=None if tag == '全部' else tag,
+            tag=None if tag == "全部" else tag,
             file_path=file_path,
             toggleTaskStatusSignal=self.toggleTaskStatusSignal,
-            exportNameListSignal=self.exportNameListSignal
+            exportNameListSignal=self.exportNameListSignal,
         )
         self.thread_pool.start(runnable)
 
     def export_chat_group_name_list(self, file_path):
         """导出群聊名单"""
-        task_id = 'chat_group_name_list'
+        task_id = "chat_group_name_list"
         if self.task_status_map.get(task_id):
             return
         self.toggleTaskStatusSignal.emit(task_id)
@@ -157,13 +157,13 @@ class ModelMain(QObject):
             task_id=task_id,
             file_path=file_path,
             toggleTaskStatusSignal=self.toggleTaskStatusSignal,
-            exportChatGroupNameListSignal=self.exportChatGroupNameListSignal
+            exportChatGroupNameListSignal=self.exportChatGroupNameListSignal,
         )
         self.thread_pool.start(runnable)
 
     def send_wechat_message(self, message_info: dict, check_pause, updatedProgressSignal):
         """发送微信消息"""
-        task_id = 'send_msg'
+        task_id = "send_msg"
         if self.task_status_map.get(task_id):
             return
         self.toggleTaskStatusSignal.emit(task_id)
@@ -178,27 +178,27 @@ class ModelMain(QObject):
             recordExecInfoSignal=self.recordExecInfoSignal,
             showInfoBarSignal=self.showInfoBarSignal,
             cacheProgressSignal=self.cacheProgressSignal,
-            deleteCacheProgressSignal=self.deleteCacheProgressSignal
+            deleteCacheProgressSignal=self.deleteCacheProgressSignal,
         )
         self.thread_pool.start(runnable)
 
     @staticmethod
     def process_message_info(message_info):
         # 处理昵称，以换行符为分割
-        if names := message_info.pop('names', list()):
-            message_info['name_list'].extend(names.split('\n'))
+        if names := message_info.pop("names", list()):
+            message_info["name_list"].extend(names.split("\n"))
 
         # 简单去重（导入名单和手动输入重复), 保持获取时候的顺序
-        message_info['name_list'] = list(dict.fromkeys(message_info['name_list']))
+        message_info["name_list"] = list(dict.fromkeys(message_info["name_list"]))
 
         # 处理消息
         msg_list = list()
-        if signal_text := message_info.pop('single_text', None):
-            msg_list.extend(signal_text.split('\n'))
-        if multi_text := message_info.pop('multi_text', None):
+        if signal_text := message_info.pop("single_text", None):
+            msg_list.extend(signal_text.split("\n"))
+        if multi_text := message_info.pop("multi_text", None):
             msg_list.append(multi_text)
 
-        message_info['msgs'] = msg_list
+        message_info["msgs"] = msg_list
         return message_info
 
     @Slot(dict)

@@ -4,9 +4,9 @@
 # Date:         2024/4/01 00:00
 # Description:
 
-from typing import (Iterable, Union)
+from typing import Iterable, Union
 
-from PySide6.QtCore import (QEasingCurve, QPropertyAnimation, QParallelAnimationGroup)
+from PySide6.QtCore import QEasingCurve, QPropertyAnimation, QParallelAnimationGroup
 from PySide6.QtWidgets import QWidget, QGraphicsOpacityEffect
 
 
@@ -30,8 +30,13 @@ def create_width_animation(widget: QWidget, target_width: int, duration=800):
     return animation
 
 
-def create_opacity_animation(widget: Union[QWidget, QGraphicsOpacityEffect], target_start, target_end, duration=1800,
-                             property_name=b'windowOpacity'):
+def create_opacity_animation(
+    widget: Union[QWidget, QGraphicsOpacityEffect],
+    target_start,
+    target_end,
+    duration=1800,
+    property_name=b"windowOpacity",
+):
     """在指定的持续时间内，将侧边面板控件的宽度动画化到目标宽度。
 
     Args:
@@ -55,7 +60,7 @@ def create_opacity_animation(widget: Union[QWidget, QGraphicsOpacityEffect], tar
 
 
 def create_animation_group(animations: Iterable):
-    """ 创建动画组
+    """创建动画组
     Args:
         animations(Iterable): 动画组成员
 

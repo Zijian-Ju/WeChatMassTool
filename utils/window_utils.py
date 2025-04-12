@@ -61,4 +61,3 @@ def is_window_visible(class_name, name):
         if win32gui.IsWindowVisible(hwnd):
             return True
     return False
-
